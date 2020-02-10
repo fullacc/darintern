@@ -59,3 +59,27 @@ func (bsc *bookStoreClass) SaveBooks(filename string) error {
 	}
 	return nil
 }
+
+func (bsc *bookStoreClass) ListBooks () ([]*Book, error){
+	return bsc.books, nil
+}
+
+func (bsc *bookStoreClass) UpdateBook(id string, book *Book) (*Book, error) {
+	for _, v := range bsc.books {
+		if v.ID == id {
+			v = book
+			return v, nil
+		}
+	}
+	return nil, errors.New("Not found")
+}
+
+func (bsc *bookStoreClass) DeleteBook(id string) error{
+	for i,v := range bsc.books {
+		if v.ID == id {
+			bsc.books = append(bsc.books[:i], bsc.books[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("Not found")
+}
