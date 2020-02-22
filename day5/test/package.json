@@ -1,7 +1,23 @@
 {
-  "name": "test",
-  "version": "1.0.0",
-  "dependencies": {
-    
-  }
+  "books":
+  [
+    {
+      "title": "Professional JavaScript",
+      "authors": "Nicholas C. Zakas",
+      "year": 2011,
+      "genre": "comedy"
+    },
+    {
+      "title": "Professional Analyser",
+      "author": "Nicholas C.Zakas",
+      "year": 2009,
+      "genre": "tale"
+    },
+    {
+      "title": "Professional Ajax",
+      "author": "Nicholas C. Zakas",
+      "year": 2008,
+      "genre": "tale"
+    }
+  ]
 }

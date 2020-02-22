@@ -8,11 +8,12 @@ import (
 )
 
 var books = []string{"first","second"}
-
+panic(err)
 func main() {
 	router := mux.NewRouter()
 	router.Methods("GET").HandlerFunc(ReadBooks)
 	router.Methods("POST").HandlerFunc(CreateBooks)
+	router.Methods("POST").HandlerFunc(DeleteBooks)
 	fmt.Println("Server started")
 
 	http.ListenAndServe("0.0.0.0:8080",router)
@@ -39,5 +40,8 @@ func CreateBooks(w http.ResponseWriter,r *http.Request){
 	}
 	books = append(books, data)
 	w.WriteHeader(http.StatusCreated)
+}
+
+func DeleteBooks(){
 
 }

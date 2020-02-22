@@ -69,6 +69,7 @@ func (ef *endpointsFactory) CreateBook() func(w http.ResponseWriter, r *http.Req
 			w.Write([]byte("Error: " + err.Error()))
 			return
 		}
+
 		book := &Book{}
 		if err := json.Unmarshal(data, book); err != nil {
 			w.WriteHeader(http.StatusBadRequest)

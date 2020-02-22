@@ -96,13 +96,13 @@ func LaunchServer(configpath string) error{
 	http.ListenAndServe("0.0.0.0:" + configfile.Port, router)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt,syscall.SIGTERM)
-	go func(filepath string, bookStore *book_store.BookStore){
+	go func(filepath string, bookStore book_store.BookStore){
 		for sig := range c {
 			log.Printf("captured %v",sig)
 			ExitWithSave(filepath,bookStore)
 			os.Exit(1)
 		}
-	}(configfile.JsonFilePath,&bookStore)
+	}(configfile.JsonFilePath,bookStore)
 
 	return nil
 }
@@ -164,13 +164,12 @@ func CreateBook(store book_store.BookStore) func(w http.ResponseWriter, r *http.
 	}
 }
 
-func ExitWithSave(filepath string, store *book_store.BookStore) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		err := store.SaveBooks(filepath)
-		if err != nil {
-			return err
-		}
+func ExitWithSave(filepath string, store book_store.BookStore) error {
+	err := store.SaveBooks(filepath)
+	if err != nil {
+		return err
 	}
+	return  nil
 }
 
 func ListBooks(store book_store.BookStore) func(w http.ResponseWriter, r *http.Request) {

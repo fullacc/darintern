@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/electricvortex/dar_golang_course/seventh/seventh/book_store"
+	"github.com/fullacc/darintern/day7/book_store"
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli"
 	"io/ioutil"
@@ -16,9 +16,9 @@ import (
 )
 
 var (
-	datapath = "/home/fullacc/go/src/github.com/fullacc/day6hw/books.json"
-	port="8080"
-	config="/home/fullacc/go/src/github.com/fullacc/day6hw/config.json"
+	datapath = "/home/fullacc/go/src/github.com/fullacc/darintern/day7/books.json"
+	port=""
+	config="/home/fullacc/go/src/github.com/fullacc/darintern/day7/config.json"
 	flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:        "config",
@@ -52,7 +52,6 @@ func run(c *cli.Context) error {
 	if err:=LaunchServer(config);err!=nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -71,20 +70,27 @@ func LaunchServer(configpath string) error{
 		return err
 	}
 	file.Close()
+
 	bookStore, err := book_store.NewBookStore(configfile.JsonFilePath)
+	postgreBookStore, err := book_store.NewPostgreBookStore(configpath)
 	if err != nil {
 		panic(err)
 	}
 
 	endpoints := book_store.NewEndpointsFactory(bookStore)
-
-
+	postgreendpoints := book_store.NewEndpointsFactory(postgreBookStore)
 	router := mux.NewRouter()
 	router.Methods("GET").Path("/{id}").HandlerFunc(endpoints.GetBook("id"))
 	router.Methods("POST").Path("/").HandlerFunc(endpoints.CreateBook())
 	router.Methods("GET").Path("/").HandlerFunc(endpoints.ListBooks())
 	router.Methods("PUT").Path("/{id}").HandlerFunc(endpoints.UpdateBook("id"))
 	router.Methods("DELETE").Path("/{id}").HandlerFunc(endpoints.DeleteBook("id"))
+
+	router.Methods("GET").Path("/db/{id}").HandlerFunc(postgreendpoints.GetBook("id"))
+	router.Methods("POST").Path("/db/").HandlerFunc(postgreendpoints.CreateBook())
+	router.Methods("GET").Path("/db/").HandlerFunc(postgreendpoints.ListBooks())
+	router.Methods("PUT").Path("/db/{id}").HandlerFunc(postgreendpoints.UpdateBook("id"))
+	router.Methods("DELETE").Path("/db/{id}").HandlerFunc(postgreendpoints.DeleteBook("id"))
 	fmt.Println("Server started")
 	go func(port string, rtr *mux.Router) {
 		http.ListenAndServe("0.0.0.0:" + port, rtr)
@@ -99,7 +105,7 @@ func LaunchServer(configpath string) error{
 	}()
 
 	<- done
-	log.Printf("sever shutdown")
+	log.Printf("server shutdown")
 	ExitWithSave(configfile.JsonFilePath, bookStore)
 	os.Exit(1)
 

@@ -13,7 +13,7 @@ type BookStore interface {
 
 	DeleteBook(id string)  error
 
-	SaveBooks(filepath string) error
+	SaveBooks(filepath string) (error)
 
 }
 

@@ -3,6 +3,7 @@ package book_store
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
@@ -77,6 +78,7 @@ func (bsc *bookStoreClass) SaveBooks(filename string) error {
 }
 
 func (bsc *bookStoreClass) ListBooks () ([]*Book, error){
+	fmt.Println("got em")
 	return bsc.books, nil
 }
 
